@@ -10,7 +10,7 @@ class Metadata(DataObject):
     methods.
 
     The dictionaries are: 'microscope', 'calibration', 'sample', 'user', 'comments'
-    They are intended for the following uses:
+    They are reserved for the following uses:
     'microscope': everything from the raw / original file goes here.
     'calibration': all calibrations added later by the user go here.
     'sample': information about the sample and sample prep.
@@ -59,7 +59,8 @@ class Metadata(DataObject):
             'R_pixel_size_units':('microscope','calibration'),
             'Q_pixel_size':('microscope','calibration'),
             'Q_pixel_size_units':('microscope','calibration'),
-            'e':('calibration',),   # elliptical distortion
+            'a':('calibration',),   # elliptical distortion
+            'b':('calibration',),
             'theta':('calibration',),
             'beam_energy':('microscope',),
             'QR_rotation':('microscope','calibration'),

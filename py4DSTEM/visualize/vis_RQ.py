@@ -1,25 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
-from .show import show,show_points
-from ..process.calibration.rotation import get_Qvector_from_Rvector,get_Rvector_from_Qvector
+from .visualize import ax_show
+from ..process.calibration import get_Qvector_from_Rvector,get_Rvector_from_Qvector
 
-def show_selected_dp(datacube,image,rx,ry,figsize=(12,6),returnfig=False,
-                     pointsize=50,pointcolor='r',scaling='log',**kwargs):
-    """
-    """
-    dp = datacube.data[rx,ry,:,:]
-    fig,(ax1,ax2) = plt.subplots(1,2,figsize=figsize)
-    _,_=show_points(image,rx,ry,scale=pointsize,pointcolor=pointcolor,figax=(fig,ax1),returnfig=True)
-    _,_=show(dp,figax=(fig,ax2),scaling=scaling,returnfig=True)
-    if not returnfig:
-        plt.show()
-        return
-    else:
-        return fig,(ax1,ax2)
-
-def show_RQ(realspace_image, diffractionspace_image,
-            realspace_pdict={}, diffractionspace_pdict={'scaling':'log'},
+def show_RQ(realspace_image, realspace_pdict,
+            diffractionspace_image, diffractionspace_pdict,
             figsize=(12,6),returnfig=False):
     """
     Shows side-by-side real/reciprocal space images.
@@ -32,8 +18,8 @@ def show_RQ(realspace_image, diffractionspace_image,
         diffractionspace_pdict      (dictionary)
     """
     fig,(ax1,ax2) = plt.subplots(1,2,figsize=figsize)
-    show(realspace_image,figax=(fig,ax1),**realspace_pdict)
-    show(diffractionspace_image,figax=(fig,ax2),**diffractionspace_pdict)
+    ax_show(realspace_image,ax1,**realspace_pdict)
+    ax_show(diffractionspace_image,ax2,**diffractionspace_pdict)
     if not returnfig:
         plt.show()
         return
@@ -103,8 +89,8 @@ def ax_addvector_QtoR(ax,vx,vy,vlength,x0,y0,QR_rotation,width=1,color='r'):
     vx,vy = vx*vlength,vy*vlength
     ax.arrow(y0,x0,vy,vx,color=color,width=width,length_includes_head=True)
 
-def show_RQ_vector(realspace_image, diffractionspace_image,
-                   realspace_pdict, diffractionspace_pdict,
+def show_RQ_vector(realspace_image, realspace_pdict,
+                   diffractionspace_image, diffractionspace_pdict,
                    vx,vy,vlength_R,vlength_Q,x0_R,y0_R,x0_Q,y0_Q,
                    QR_rotation,vector_space='R',
                    width_R=1,color_R='r',
@@ -139,8 +125,8 @@ def show_RQ_vector(realspace_image, diffractionspace_image,
                                     space vector.
     """
     assert(vector_space in ('R','Q'))
-    fig,(ax1,ax2) = show_RQ(realspace_image, diffractionspace_image,
-                            realspace_pdict, diffractionspace_pdict,
+    fig,(ax1,ax2) = show_RQ(realspace_image, realspace_pdict,
+                            diffractionspace_image, diffractionspace_pdict,
                             figsize=figsize,returnfig=True)
     if vector_space=='R':
         ax_addvector(ax1,vx,vy,vlength_R,x0_R,y0_R,width=width_R,color=color_R)
@@ -154,8 +140,8 @@ def show_RQ_vector(realspace_image, diffractionspace_image,
     else:
         return fig,(ax1,ax2)
 
-def show_RQ_vectors(realspace_image, diffractionspace_image,
-                    realspace_pdict, diffractionspace_pdict,
+def show_RQ_vectors(realspace_image, realspace_pdict,
+                    diffractionspace_image, diffractionspace_pdict,
                     vx,vy,vlength_R,vlength_Q,x0_R,y0_R,x0_Q,y0_Q,
                     QR_rotation,vector_space='R',
                     width_R=1,color_R='r',
@@ -200,8 +186,8 @@ def show_RQ_vectors(realspace_image, diffractionspace_image,
     else:
         color_Q =[color_Q for i in range(len(vx))]
 
-    fig,(ax1,ax2) = show_RQ(realspace_image, diffractionspace_image,
-                            realspace_pdict, diffractionspace_pdict,
+    fig,(ax1,ax2) = show_RQ(realspace_image, realspace_pdict,
+                            diffractionspace_image, diffractionspace_pdict,
                             figsize=figsize,returnfig=True)
     for x,y,cR,cQ in zip(vx,vy,color_R,color_Q):
         if vector_space=='R':
@@ -305,8 +291,8 @@ def ax_addaxes_RtoQ(ax,vx,vy,vlength,x0,y0,QR_rotation,width=1,color='r',
     ax_addaxes(ax,vx,vy,vlength,x0,y0,width=width,color=color,labelaxes=labelaxes,
                labelsize=labelsize,labelcolor=labelcolor,righthandedcoords=True)
 
-def show_RQ_axes(realspace_image,diffractionspace_image,
-                 realspace_pdict, diffractionspace_pdict,
+def show_RQ_axes(realspace_image, realspace_pdict,
+                 diffractionspace_image, diffractionspace_pdict,
                  vx,vy,vlength_R,vlength_Q,x0_R,y0_R,x0_Q,y0_Q,
                  QR_rotation,vector_space='R',
                  width_R=1,color_R='r',width_Q=1,color_Q='r',
@@ -343,8 +329,8 @@ def show_RQ_axes(realspace_image,diffractionspace_image,
                                     space vector.
     """
     assert(vector_space in ('R','Q'))
-    fig,(ax1,ax2) = show_RQ(realspace_image, diffractionspace_image,
-                            realspace_pdict, diffractionspace_pdict,
+    fig,(ax1,ax2) = show_RQ(realspace_image, realspace_pdict,
+                            diffractionspace_image, diffractionspace_pdict,
                             figsize=figsize,returnfig=True)
     if vector_space=='R':
         ax_addaxes(ax1,vx,vy,vlength_R,x0_R,y0_R,width=width_R,color=color_R,

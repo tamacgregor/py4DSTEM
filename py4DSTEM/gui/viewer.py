@@ -19,18 +19,17 @@
 #############################################################################################
 
 from __future__ import division, print_function
-from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5 import QtCore, QtWidgets
 import numpy as np
 import sys, os
 import pyqtgraph as pg
 import gc
-from pathlib import Path
 
 from .dialogs import ControlPanel, PreprocessingWidget, SaveWidget, EditMetadataWidget
 from .gui_utils import sibling_path, pg_point_roi, LQCollection, datacube_selector
-from ..io.read import read
-from ..io.native import save, is_py4DSTEM_file
-from ..io.datastructure.datacube import DataCube
+from ..file.io.read import read
+from ..file.io.native import save, is_py4DSTEM_file
+from ..file.datastructure.datacube import DataCube
 from .strain import *
 
 import IPython
@@ -67,10 +66,6 @@ class DataViewer(QtWidgets.QMainWindow):
         self.main_window = QtWidgets.QWidget()
         self.main_window.setWindowTitle("py4DSTEM")
 
-        icon = QtGui.QIcon(str(Path(__file__).parent.absolute() / "logo.png"))
-        self.setWindowIcon(icon)
-        self.qtapp.setWindowIcon(icon)
-
         # Set up sub-windows and arrange into primary py4DSTEM window
         self.setup_diffraction_space_widget()
         self.setup_real_space_widget()
@@ -88,14 +83,6 @@ class DataViewer(QtWidgets.QMainWindow):
         self.update_real_space_view()
         self.diffraction_space_widget.ui.normDivideRadio.setChecked(True)
         self.diffraction_space_widget.normRadioChanged()
-
-        if len(argv) > 1:
-            path = os.path.abspath(argv[1])
-            try:
-                self.settings.data_filename.val = path
-                self.load_file()
-            except Exception:
-                print(f"Tried to set file to {path} but something went wrong...")
 
 
     ###############################################
@@ -310,7 +297,7 @@ class DataViewer(QtWidgets.QMainWindow):
             if is_py4DSTEM_file(fname):
                 self.datacube = datacube_selector(fname)
             else:
-                self.datacube = read(fname)
+                self.datacube,_ = read(fname)
             if type(self.datacube) == str :
                 self.Unidentified_file(fname)
                 #Reset view
@@ -341,8 +328,6 @@ class DataViewer(QtWidgets.QMainWindow):
         # Set scan size maxima
         self.control_widget.spinBox_Nx.setMaximum(self.datacube.R_N)
         self.control_widget.spinBox_Ny.setMaximum(self.datacube.R_N)
-
-        self.main_window.setWindowTitle(fname)
 
         return
 
