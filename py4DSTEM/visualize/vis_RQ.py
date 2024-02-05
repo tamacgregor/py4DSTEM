@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from .visualize import ax_show
-from ..process.calibration import get_Qvector_from_Rvector,get_Rvector_from_Qvector
+from ..process.calibration.rotation import get_Qvector_from_Rvector,get_Rvector_from_Qvector
 
 def show_RQ(realspace_image, realspace_pdict,
             diffractionspace_image, diffractionspace_pdict,
@@ -347,5 +347,3 @@ def show_RQ_axes(realspace_image, realspace_pdict,
         return
     else:
         return fig,(ax1,ax2)
-
-
